@@ -29,6 +29,5 @@ function calculateEntry(entrants) {
   }
   return result;
 }
-console.log(calculateEntry());
 
 module.exports = { calculateEntry, countEntrants };
