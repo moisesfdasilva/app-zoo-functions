@@ -1,40 +1,40 @@
 const data = require('../data/zoo_data');
 
 const newfunction = (scheduleTarget) => {
-  const abcd = (data.species.filter((a) => a.availability.includes(scheduleTarget)));
-  const abcde = [];
-  abcd.forEach((element) => abcde.push(element.name));
-  const textPt1 = `Open from ${data.hours.scheduleTarget.open}am until`;
-  const textPt2 = `${data.hours.scheduleTarget.close}pm`;
+  let exhibResult = [];
+  let officeHourText = [];
+  if (scheduleTarget === 'Monday') {
+    exhibResult = 'The zoo will be closed!';
+    officeHourText = 'CLOSED';
+  } else {
+    const animalForDay = (data.species.filter((a) => a.availability.includes(scheduleTarget)));
+    animalForDay.forEach((element) => exhibResult.push(element.name));
+    const textPt1 = `Open from ${data.hours[scheduleTarget].open}am until`;
+    const textPt2 = `${data.hours[scheduleTarget].close}pm`;
+    officeHourText = `${textPt1} ${textPt2}`;
+  }
   const result = {
-    scheduleTarget: {
-      exhibition: abcd,
-      officeHour: `${textPt1} ${textPt2}`,
-    },
-  };
+    [scheduleTarget]: { officeHour: officeHourText, exhibition: exhibResult } };
   return result;
-  // officeHour = 'Open from 8am until 6pm'; -> data.hours.
-  // exhibition = [array de animais disponíveis no dia];
-  // {"Tuesday": {"exhibition": ["lions", "tigers", "bears", "penguins", "elephants", "giraffes"], "officeHour": "Open from 8am until 6pm"}}
 };
 
 function getSchedule(scheduleTarget) {
-  let result = [];
-  const abc = (data.species.filter((a) => a.name === scheduleTarget));
+  let result = {};
+  const objAnimal = (data.species.filter((element) => element.name === scheduleTarget));
   const dayOfWeek = Object.keys(data.hours);
 
-  if (typeof scheduleTarget === 'undefined') {
-    result = data.hours;
-  } else if (abc.length > 0) {
-    result = abc[0].availability;
+  if (objAnimal.length > 0) {
+    result = objAnimal[0].availability;
   } else if (dayOfWeek.includes(scheduleTarget)) {
     result = newfunction(scheduleTarget);
+  } else {
+    dayOfWeek.sort();
+    dayOfWeek.forEach((element) => {
+      const resultArrayDestruturing = (Object.values(newfunction(element)))[0];
+      result[element] = resultArrayDestruturing;
+    });
   }
   return result;
 }
-console.log(getSchedule('Tuesday'));
-// -vazio!
-// 'lions'
-// 'Tuesday'
 
 module.exports = getSchedule;
